@@ -36,23 +36,18 @@ def Photo_Capture():
             cap.release()
             cv2.destroyAllWindows()                  
             return 0
-'''
-    cap.release()
-    cv2.destroyAllWindows()
-    return 1
-'''
+
     
  
 def Collect_Face_Info():
-    #subscription_key = "b063f3cbadc647f2af39154012aacab8"
     dotenv_path = join(dirname(__file__), '.env')
     load_dotenv(dotenv_path)
     subscription_key = os.getenv('key')
-    #assert subscription_key
+    
 
     face_api_url = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect"
 
-    image_path = "/home/arpitansh/Desktop/python basic code/test_image.jpg"  
+    image_path = "test_image.jpg"  # Set the image path  
 
     # Read the image into a byte array
     image_data = open(image_path, "rb").read()
@@ -109,7 +104,7 @@ def Print_Data(analysis):
         
 
 # Displaying Captured Image      
-    image = cv2.imread('/home/arpitansh/Desktop/python basic code/test_image.jpg')
+    image = cv2.imread('test_image.jpg')  # Set the image path
     cv2.imshow('Captured Image',image)
     if cv2.waitKey(0) == 27:
         cv2.destroyAllWindows()
