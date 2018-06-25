@@ -1,5 +1,16 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Jun 23 18:52:16 2018
+
+@author: arpitansh
+"""
+
 import cv2
 import requests
+from os.path import join, dirname
+from dotenv import load_dotenv
+import os
 
 
 
@@ -11,27 +22,32 @@ def Photo_Capture():
         if ret == True:
             cv2.imshow('image',frame)
             
-        # save frame as JPEG file
-        if cv2.waitKey(1) & 0xFF == ord('s'):
+        
+        k = cv2.waitKey(1)
+        # save frame as JPEG file if s is hit
+        if k%256 == 115:
             cv2.imwrite("test_image.jpg", frame) 
-            break
+            cap.release()
+            cv2.destroyAllWindows()
+            return 1
         
         # exit if Escape is hit
-        if cv2.waitKey(1) == 27:                    
-            break
-  
-    cap.release()
-    cv2.destroyAllWindows()
-    return 1
+        if k%256 == 27:
+            cap.release()
+            cv2.destroyAllWindows()                  
+            return 0
+
     
  
 def Collect_Face_Info():
-    subscription_key = "b063f3cbadc647f2af39154012aacab8"
-    assert subscription_key
+    dotenv_path = join(dirname(__file__), '.env')
+    load_dotenv(dotenv_path)
+    subscription_key = os.getenv('key')
+    
 
     face_api_url = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect"
 
-    image_path = "/home/arpitansh/Desktop/python basic code/test_image.jpg"  
+    image_path = "test_image.jpg"  # Set the image path  
 
     # Read the image into a byte array
     image_data = open(image_path, "rb").read()
@@ -47,13 +63,25 @@ def Collect_Face_Info():
         'returnFaceAttributes': 'age,gender,smile,' + 
         'emotion,hair,makeup,accessories'
         }
+    try:
+        
 
-    response = requests.post(
-            face_api_url, headers=headers, params=params, data=image_data
-            )
+        response = requests.post(
+                face_api_url, headers=headers, params=params, data=image_data
+                )
 
-    analysis = response.json()
-    return analysis
+        analysis = response.json()
+        return analysis
+    
+    except requests.exceptions.RequestException as err:
+        print('Connection Error',err)
+    except requests.exceptions.ConnectionError as errc:
+        print('Connection Error',errc)
+    except requests.exceptions.ConnectTimeout as errt:
+        print('Time out',errt)
+    except requests.exceptions.HTTPError as errh:
+        print('HTTP err',errh)
+    return None
     
     
 def Print_Data(analysis):
@@ -76,7 +104,7 @@ def Print_Data(analysis):
         
 
 # Displaying Captured Image      
-    image = cv2.imread('/home/arpitansh/Desktop/python basic code/test_image.jpg')
+    image = cv2.imread('test_image.jpg')  # Set the image path
     cv2.imshow('Captured Image',image)
     if cv2.waitKey(0) == 27:
         cv2.destroyAllWindows()
@@ -85,8 +113,8 @@ def Print_Data(analysis):
   
     
 def main():
-    Photo_Capture()
-    if True:
+    flag = Photo_Capture()
+    if flag:
         analysis = Collect_Face_Info()
         if analysis:
             Print_Data(analysis)
