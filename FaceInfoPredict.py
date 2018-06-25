@@ -13,7 +13,7 @@ def Photo_Capture():
             
         # save frame as JPEG file
         if cv2.waitKey(1) & 0xFF == ord('s'):
-            cv2.imwrite("test_image1.jpg", frame) 
+            cv2.imwrite("test_image.jpg", frame) 
             break
         
         # exit if Escape is hit
@@ -31,7 +31,7 @@ def Collect_Face_Info():
 
     face_api_url = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect"
 
-    image_path = "/home/arpitansh/Desktop/python basic code/test_image1.jpg"  
+    image_path = "/home/arpitansh/Desktop/python basic code/test_image.jpg"  
 
     # Read the image into a byte array
     image_data = open(image_path, "rb").read()
@@ -74,6 +74,13 @@ def Print_Data(analysis):
                 rslt_emotion = emotion
         print('Emotion: ',rslt_emotion,'(',check_emo*100,'%',')') 
         
+
+# Displaying Captured Image      
+    image = cv2.imread('/home/arpitansh/Desktop/python basic code/test_image.jpg')
+    cv2.imshow('Captured Image',image)
+    if cv2.waitKey(0) == 27:
+        cv2.destroyAllWindows()
+
     
   
     
@@ -83,6 +90,7 @@ def main():
         analysis = Collect_Face_Info()
         if analysis:
             Print_Data(analysis)
+            
             
 main()
  
