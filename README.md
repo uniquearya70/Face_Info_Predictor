@@ -1,8 +1,7 @@
+
 Hiii
 
-This code detect the face from video and give the info like Gender,age,emotions,makeup,accessories etc. 
-
-If there are many person in video then detect all faces and give the info about all the faces with unique FaceId.
+here I am detecting face from video using Microsoft Cognitive Services face-API and tell faceId,Age,Gender,emotion in the output with captured Image in the console.
 
 This is tasted on linux 16.04 LTS
 
