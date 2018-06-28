@@ -11,7 +11,8 @@ import requests
 from os.path import join, dirname
 from dotenv import load_dotenv
 import os
-import Facedata_insert
+# module that insert face Data into database
+import Facedata_insert  
 
 
 
@@ -47,8 +48,9 @@ def Collect_Face_Info():
     
 
     face_api_url = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect"
-
-    image_path = "test_image.jpg"  # Set the image path  
+    
+    # Set the image path
+    image_path = "test_image.jpg"    
 
     # Read the image into a byte array
     image_data = open(image_path, "rb").read()
