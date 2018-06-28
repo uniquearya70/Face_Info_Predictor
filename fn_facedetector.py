@@ -11,6 +11,7 @@ import requests
 from os.path import join, dirname
 from dotenv import load_dotenv
 import os
+import Facedata_insert
 
 
 
@@ -89,10 +90,12 @@ def Print_Data(analysis):
     for face in analysis:
         count += 1
     
-        id = (face['faceId'])
-        print('face id:',id)
-        print('Gender:',face['faceAttributes']['gender'])
-        print('Age:',face['faceAttributes']['age'])
+        face_id = (face['faceId'])
+        print('face id:',face_id) 
+        gender = face['faceAttributes']['gender']
+        print('Gender:',gender)
+        age = face['faceAttributes']['age']
+        print('Age:',age)
     
         check_emo =0
         rslt_emotion = " "
@@ -100,11 +103,21 @@ def Print_Data(analysis):
             if face['faceAttributes']['emotion'][emotion] > check_emo:
                 check_emo = face['faceAttributes']['emotion'][emotion]
                 rslt_emotion = emotion
-        print('Emotion: ',rslt_emotion,'(',check_emo*100,'%',')') 
+        emotion = rslt_emotion
+        emotion_percentage = check_emo*100 
+        
+        print('Emotion:',emotion)
+        print('Emotion Percentage: ',emotion_percentage) 
+        
+        # Transferring face Details into Database
+        Facedata_insert.insert_Face_Details(face_id, gender,age,emotion,emotion_percentage)
+        
+        
         
 
-# Displaying Captured Image      
-    image = cv2.imread('test_image.jpg')  # Set the image path
+# Displaying Captured Image  
+    # Set the image path
+    image = cv2.imread('test_image.jpg')  
     cv2.imshow('Captured Image',image)
     if cv2.waitKey(0) == 27:
         cv2.destroyAllWindows()
