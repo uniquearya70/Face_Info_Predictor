@@ -11,12 +11,11 @@ import requests
 from os.path import join, dirname
 from dotenv import load_dotenv
 import os
-# module that insert face Data into database
-import Facedata_insert  
+import Facedata_insert
 
 
 
-def Photo_Capture():
+def photoCapture():
     cap = cv2.VideoCapture(0)
     while True:
   
@@ -41,16 +40,15 @@ def Photo_Capture():
 
     
  
-def Collect_Face_Info():
+def collectFaceInfo():
     dotenv_path = join(dirname(__file__), '.env')
     load_dotenv(dotenv_path)
     subscription_key = os.getenv('key')
     
 
     face_api_url = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect"
-    
-    # Set the image path
-    image_path = "test_image.jpg"    
+
+    image_path = "test_image.jpg"  # Set the image path  
 
     # Read the image into a byte array
     image_data = open(image_path, "rb").read()
@@ -64,7 +62,7 @@ def Collect_Face_Info():
         'returnFaceId': 'True',
         'returnFaceLandmarks': 'false',
         'returnFaceAttributes': 'age,gender,smile,' + 
-        'emotion,hair,makeup,accessories'
+        'emotion'
         }
     try:
         
@@ -72,34 +70,36 @@ def Collect_Face_Info():
         response = requests.post(
                 face_api_url, headers=headers, params=params, data=image_data
                 )
-
+        response.raise_for_status()
         analysis = response.json()
         return analysis
-    
-    except requests.exceptions.RequestException as err:
-        print('Connection Error',err)
-    except requests.exceptions.ConnectionError as errc:
-        print('Connection Error',errc)
-    except requests.exceptions.ConnectTimeout as errt:
-        print('Time out',errt)
+
+ 
     except requests.exceptions.HTTPError as errh:
-        print('HTTP err',errh)
+        print ("Http Error:",errh)
+    except requests.exceptions.ConnectionError as errc:
+        print ("Error Connecting:",errc)
+    except requests.exceptions.Timeout as errt:
+        print ("Timeout Error:",errt)
+    except requests.exceptions.RequestException as err:
+        print ("OOps: Something Else",err)
     return None
-    
-    
-def Print_Data(analysis):
+
+ 
+def printData(analysis):
     count = 0
     for face in analysis:
         count += 1
     
-        face_id = (face['faceId'])
-        print('face id:',face_id) 
-        gender = face['faceAttributes']['gender']
-        print('Gender:',gender)
+        face_id = face['faceId']
+        gender = face['faceAttributes']['gender'] 
         age = face['faceAttributes']['age']
-        print('Age:',age)
+        
+        print('face id:', face_id) 
+        print('Gender:', gender)
+        print('Age:', age) 
     
-        check_emo =0
+        check_emo = 0
         rslt_emotion = " "
         for emotion in face['faceAttributes']['emotion']:
             if face['faceAttributes']['emotion'][emotion] > check_emo:
@@ -108,32 +108,34 @@ def Print_Data(analysis):
         emotion = rslt_emotion
         emotion_percentage = check_emo*100 
         
-        print('Emotion:',emotion)
-        print('Emotion Percentage: ',emotion_percentage) 
+        print('Emotion:', emotion)
+        print('Emotion Percentage: ', emotion_percentage)
         
         # Transferring face Details into Database
         Facedata_insert.insert_Face_Details(face_id, gender,age,emotion,emotion_percentage)
-        
-        
-        
 
 # Displaying Captured Image  
     # Set the image path
+def showCapImg():
     image = cv2.imread('test_image.jpg')  
     cv2.imshow('Captured Image',image)
     if cv2.waitKey(0) == 27:
-        cv2.destroyAllWindows()
+        cv2.destroyAllWindows()  
 
     
   
-    
-def main():
-    flag = Photo_Capture()
-    if flag:
-        analysis = Collect_Face_Info()
-        if analysis:
-            Print_Data(analysis)
+flag = photoCapture()
+if flag:
+    analysis = collectFaceInfo()
+    if analysis:
+        printData(analysis)
+        showCapImg()
+    else:
+        print("Face Data Not returned")
+        showCapImg()
             
+else:
+    print('Photo Not Captured')  
+             
             
-main()
  
