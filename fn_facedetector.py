@@ -115,7 +115,6 @@ def printData(analysis):
         Facedata_insert.insert_Face_Details(face_id, gender,age,emotion,emotion_percentage)
 
 # Displaying Captured Image  
-    # Set the image path
 def showCapImg():
     image = cv2.imread('test_image.jpg')  
     cv2.imshow('Captured Image',image)
