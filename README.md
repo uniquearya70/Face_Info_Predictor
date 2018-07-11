@@ -1,7 +1,7 @@
 
-Hiii
+Hello
 
-Here I am detecting face from video using Microsoft Cognitive Services face-API and tells Face details like faceId,Age,Gender,emotion in the output in console with captured Image and Face details is saved into the Database.
+I have worked on face datection using webcam in real time using Microsoft Cognitive Services face-API and print gender, age, emotion as output in console and store face details in the database. Face is detecing face when we will hit s.
 
 This is tasted on linux 16.04 LTS
 
